@@ -3,79 +3,65 @@ Hangman is a classic game in which a player thinks of a word and the other playe
 
 This is an implementation of the Hangman game, where the computer thinks of a word and the user tries to guess it. 
 
-## Milestone 2
+## Aim
+The code selects a word at random from a given list using the Hangman class. Upon initialisation, this class sets up several attributes, including the word list, the selected word itself, a representation of the word with underscores for unrevealed letters, the count of unique letters in the chosen word, the number of lives available, and a list to store guessed letters. When a player inputs a letter, the code checks if it exists in the chosen word. 
+If correct, it updates the representation of the word, decrements the count of remaining unique letters to guess, and provides feedback on the number of remaining letters. Input validation ensures that only single alphabetical letters are accepted. The game continues in a loop until either the player runs out of lives, resulting in a "You Lost!" message, or successfully guesses all letters, triggering a "Congratulations, you won the game!" message. The main function initializes the word list and initiates the game.
 
-This Milestone is made up of 4 tasks:
-1. Create a list of 5 fruits and print in the terminal.
-2. Use a function to randomly select and item from the list:
-  ``` python
-  random.choice()
-  ```
-3. Create an input function for user to enter a single letter.
-4. Use an if statement to make sure the user inputs a single letter from the alphabet.
-  ``` python
-  guess = input("enter a single letter: ")
-if len(guess) == 1 and guess.isalpha():
-    print("Good Guess!")
-else:
-    print("Oops! That is not a valid input")
- ```
- 
-## Milestone 3
+## Features
+1. Random Word Selection: The Hangman class randomly selects a word from the provided word list using the random.choice() function.
 
-In this task I needed to 
-```
-install random-word
-```
-This allowed me to take a random word from a list in my code.
+2. Initialization: The Hangman class has an __init__ method that initializes various attributes such as word_list, word, word_guessed, num_letters, num_lives, and list_of_guesses.
 
-In this Milestone I created 2 functions.
-1. A function which asked a user to input an alphabetical letter and validated that it is a single letter from the alphabet.
-2. A function which checks if it is in a random word from a list.
+3. Word Guessing Mechanism: The check_guess method checks if the guessed letter is present in the chosen word. It updates the word_guessed attribute accordingly and decrements the num_letters attribute if the guess is correct.
 
-``` python
-def check_guess(guess):
-     guess.lower()
-     if guess in word:
-          print(f"Good Guess! {guess} is in the word.")
-     else:
-          print(f"Sorry, {guess} is not in the word. Try again")
+4. Input Validation: The ask_for_input method validates the user input, ensuring that it is a single alphabetical letter.
 
-def ask_for_input():
-     while True:
-          guess = input("enter a single letter: ")
-          if len(guess) == 1 and guess.isalpha():
-               break
-          else:
-               print("Invalid letter, please enter a single alphabetical letter")
-     check_guess(guess)
-```
+5. Game Loop: The play_game function runs a loop until the game is won or lost, based on the conditions of num_lives and num_letters.
 
-I called the guess_check funtion inside my ask_for_input to make sure it checked if the letter was in the word after it made sure the input was valid.
+6. Win/Loss Conditions: The game ends with a "You Lost!" message if the player runs out of lives (num_lives == 0). It ends with a "Congratulations, you won the game!" message if all letters in the word are guessed (num_letters == 0).
 
-## Milestone 4 
+7. Main Function: The main function initialises the word list and starts the game by calling the play_game function.
 
-Used a class to create the hangman game.
+## Installation
+To install the Hangman game, follow these steps:
 
-Created 2 methods to validate the game and produce an outcome.
+1. **Clone the Repository** : Begin by cloning the repository containing the Hangman game code. You can do this by running the following command in your terminal:
+'''
+git clone <repository_url>
+'''
+Replace <repository_url> with the URL of the repository.
+
+2. **Navigate to the Directory** : Move into the directory where the code is located. Use the cd command in your terminal:
+'''
+cd hangman-game
+'''
+3. **Run the Game** : Once you're in the correct directory, you can run the game by executing the Python script. Use the following command:
+'''
+python hangman.py
+'''
+4. **Enjoy the Game** : The Hangman game should now start running in your terminal. Follow the on-screen instructions to play the game.
+
+### Prerequisites
+
+- Python: Download and install Python from the [official website](https://www.python.org/downloads/).
+- Git (Optional): If you plan to clone the repository, you'll need Git installed on your system. Download Git from the [official website](https://git-scm.com/downloads).
+
+### The Final Code
 
 ``` python
-
 import random
 
-word_list = ["apple", "banana", "pear", "orange", "strawberry", "grapes"]
 
 class Hangman():
      def __init__(self, word_list, num_lives=5):
           self.word_list = word_list
           self.word = random.choice(word_list)
           self.word_guessed = ["_"] * len(self.word)
-          self.num_letters = len(self.word)
+          self.num_letters = len(set(self.word))
           self.num_lives = num_lives
           self.list_of_guesses = []
           
      def check_guess(self, guess):
-        guess.lower()
         if guess in self.word:
             print(f"Good Guess! {guess} is in the word.")
             for i in range(len(self.word)):
@@ -83,15 +69,16 @@ class Hangman():
                     self.word_guessed[i] = guess
             self.num_letters = self.num_letters - 1
             print(self.word_guessed)
+            print(f"you have {self.num_letters} letters left to guess!")
         else:
             print(f"Sorry, {guess} is not in the word. Try again")
             self.num_lives = self.num_lives - 1
-            print(f"You have {self.num_lives} lives left")
+            print(f"You have {self.num_lives} left!")
 
 
      def ask_for_input(self):
-        while self.num_lives > 0:
-            guess = input("enter a single letter: ")
+            guess = input("enter a single letter: ").lower()
+            
             if len(guess) != 1 or not guess.isalpha():
                 print("Invalid letter, please enter a single alphabetical letter")
             elif guess in self.list_of_guesses:
@@ -99,10 +86,23 @@ class Hangman():
             else:
                 self.list_of_guesses.append(guess)
                 self.check_guess(guess)
-        print("Game Over!")
 
-Hangman_1 = Hangman(word_list)
-Hangman_1.ask_for_input()
+def play_game(word_list):
+    num_lives = 5
+    game = Hangman(word_list, num_lives)
+    while True:
+        if game.num_lives == 0:
+            print("You Lost!")
+            break
+        elif game.num_letters == 0:
+            print("Congratulations, you won the game!")
+            break
+        else:
+            game.ask_for_input()
+
+if __name__ == "__main__":
+    word_list = ["apple", "banana", "pear", "orange", "strawberry", "grapes"]
+    play_game(word_list)
 
 ```
 
